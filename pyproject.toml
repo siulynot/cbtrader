@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cbtrader"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "textual>=0.80",
+    "textual-plotext>=0.2",
+    "plotext>=5.3",
+    "websockets>=12.0",
+    "PyJWT>=2.8",
+    "cryptography>=41.0",
+    "requests>=2.31",
+    "pyyaml>=6.0",
+    "sortedcontainers>=2.4",
+]
+
+[project.scripts]
+cbtrader = "cbtrader.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]

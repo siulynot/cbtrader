@@ -1,0 +1,32 @@
+# ── Secrets ──────────────────────────────────────────────────
+config.yaml          # contains API keys — never commit this
+
+# ── Python ───────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+*.whl
+
+# ── Virtual environments ──────────────────────────────────────
+.venv/
+venv/
+env/
+.env
+
+# ── Editor / OS ───────────────────────────────────────────────
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# ── Logs / output ─────────────────────────────────────────────
+outputs/
+*.log

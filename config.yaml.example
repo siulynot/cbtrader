@@ -1,0 +1,20 @@
+coinbase:
+  # Coinbase Advanced Trade API key
+  # Generate at: https://www.coinbase.com/settings/api
+  # Required scopes: view, trade
+  api_key: "organizations/<org-id>/apiKeys/<key-id>"
+  api_secret: |
+    -----BEGIN EC PRIVATE KEY-----
+    <your private key here>
+    -----END EC PRIVATE KEY-----
+
+trading:
+  # Spot product to display on the Spot BTC tab
+  default_product: "BTC-USD"
+
+  # Derivatives product (FCM BTC perpetual)
+  # BIP-20DEC30-CDE = Coinbase FCM BTC PERP (no INTX activation required)
+  deriv_product: "BIP-20DEC30-CDE"
+
+  orderbook_depth: 12   # rows shown per side in the order book
+  trades_history:  30   # number of recent trades to display
