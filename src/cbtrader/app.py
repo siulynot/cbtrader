@@ -62,15 +62,17 @@ class CbTraderApp(App):
                  rest: CoinbaseREST,
                  feed: WebSocketFeed,
                  spot_store: DataStore, spot_product: str,
+                 order_product: str,
                  deriv_store: DataStore, deriv_product: str,
                  ) -> None:
         super().__init__()
-        self._rest          = rest
-        self._feed          = feed
-        self._spot_store    = spot_store
-        self._spot_product  = spot_product
-        self._deriv_store   = deriv_store
-        self._deriv_product = deriv_product
+        self._rest           = rest
+        self._feed           = feed
+        self._spot_store     = spot_store
+        self._spot_product   = spot_product
+        self._order_product  = order_product   # pair used for open orders / history
+        self._deriv_store    = deriv_store
+        self._deriv_product  = deriv_product
 
     # ── Layout ────────────────────────────────────────────────────────────────
 
@@ -208,14 +210,14 @@ class CbTraderApp(App):
 
     async def _async_fetch_spot_orders(self) -> None:
         try:
-            raw = await asyncio.to_thread(self._rest.get_open_orders, self._spot_product)
+            raw = await asyncio.to_thread(self._rest.get_open_orders, self._order_product)
             self._spot_store.set_orders(self._parse_orders(raw))
         except Exception as e:
             self._spot_store.error = f"Orders error: {e}"
 
     async def _async_fetch_spot_history(self) -> None:
         try:
-            raw = await asyncio.to_thread(self._rest.get_order_history, self._spot_product)
+            raw = await asyncio.to_thread(self._rest.get_order_history, self._order_product)
             self._spot_store.set_history(self._parse_orders(raw, include_fill=True))
         except Exception as e:
             self._spot_store.error = f"History error: {e}"

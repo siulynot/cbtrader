@@ -26,6 +26,7 @@ def main() -> None:
 
     trading       = cfg.get("trading", {})
     spot_product  = trading.get("default_product", "BTC-USD")
+    order_product = trading.get("order_product", spot_product)
     deriv_product = trading.get("deriv_product",   "BTC-PERP-INTX")
 
     rest = CoinbaseREST(key_name, key_secret)
@@ -33,9 +34,15 @@ def main() -> None:
     spot_store  = DataStore()
     deriv_store = DataStore()
 
-    # Single WebSocket connection for all products → no concurrent-connection issues
+    # Subscribe to both market product and order product so user channel
+    # receives fills from the trading pair (BTC-USDC) while ticker/book
+    # come from the liquid pair (BTC-USD).
+    ws_stores: dict[str, DataStore] = {spot_product: spot_store, deriv_product: deriv_store}
+    if order_product != spot_product:
+        ws_stores[order_product] = spot_store
+
     feed = WebSocketFeed(
-        stores    = {spot_product: spot_store, deriv_product: deriv_store},
+        stores    = ws_stores,
         key_name  = key_name,
         key_secret = key_secret,
     )
@@ -44,6 +51,7 @@ def main() -> None:
         rest,
         feed,
         spot_store, spot_product,
+        order_product,
         deriv_store, deriv_product,
     )
     app.run()

@@ -152,15 +152,21 @@ class WebSocketFeed:
                 pid = o.get("product_id", "")
                 by_product.setdefault(pid, []).append(o)
 
+            # Collect new orders per store; a store may service multiple products
+            # (e.g. spot_store handles both BTC-USD market data and BTC-USDC orders)
+            store_orders: dict[int, tuple] = {}
             for pid, raw_orders in by_product.items():
                 store = self._stores.get(pid)
                 if store is None:
                     continue
-                orders = []
+                sid = id(store)
+                if sid not in store_orders:
+                    store_orders[sid] = (store, [])
+                bucket = store_orders[sid][1]
                 for o in raw_orders:
                     cfg = o.get("order_configuration", {})
                     llg = cfg.get("limit_limit_gtc", cfg.get("limit_limit_gtd", {}))
-                    orders.append(Order(
+                    bucket.append(Order(
                         order_id    = o.get("order_id", ""),
                         side        = o.get("order_side", ""),
                         order_type  = o.get("order_type", ""),
@@ -171,4 +177,6 @@ class WebSocketFeed:
                         status      = status,
                         created_at  = o.get("creation_time", "")[:19],
                     ))
+
+            for store, orders in store_orders.values():
                 store.set_orders(orders)
